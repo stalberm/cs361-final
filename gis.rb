@@ -87,24 +87,24 @@ attr_reader :lat, :lon, :ele, :name, :icon
   def get_waypoint_json(indent=0)
     j = '{"type": "Feature",'
     j += '"geometry": {"type": "Point","coordinates": '
-    j += "[#{@lon},#{@lat}"
+    j += "[#{lon},#{lat}"
 
     if ele != nil
-      j += ",#{@ele}"
+      j += ",#{ele}"
     end
 
     j += ']},'
     if name != nil or icon != nil
       j += '"properties": {'
       if name != nil
-        j += '"title": "' + @name + '"'
+        j += '"title": "' + name + '"'
       end
 
       if icon != nil 
         if name != nil
           j += ','
         end
-        j += '"icon": "' + @icon + '"'  # type is the icon
+        j += '"icon": "' + icon + '"'  # type is the icon
       end
       j += '}'
     end
