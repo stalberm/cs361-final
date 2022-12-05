@@ -14,39 +14,39 @@ class Track
   end
 
   def get_track_json()
-    j = '{'
-    j += '"type": "Feature", '
+    json_string = '{'
+    json_string += '"type": "Feature", '
     if name != nil
-      j+= '"properties": {'
-      j += '"title": "' + name + '"'
-      j += '},'
+      json_string+= '"properties": {'
+      json_string += '"title": "' + name + '"'
+      json_string += '},'
     end
-    j += '"geometry": {'
-    j += '"type": "MultiLineString",'
-    j +='"coordinates": ['
+    json_string += '"geometry": {'
+    json_string += '"type": "MultiLineString",'
+    json_string +='"coordinates": ['
 
     segments.each_with_index do |s, index|
       if index > 0
-        j += ","
+        json_string += ","
       end
-      j += '['
-      tsj = ''
+      json_string += '['
+      temp_point_json = ''
       s.points.each do |point|
-        if tsj != ''
-          tsj += ','
+        if temp_point_json != ''
+          temp_point_json += ','
         end
         # Add the coordinate
-        tsj += '['
-        tsj += "#{point.lon},#{point.lat}"
+        temp_point_json += '['
+        temp_point_json += "#{point.lon},#{point.lat}"
         if point.elev != nil
-          tsj += ",#{point.elev}"
+          temp_point_json += ",#{point.elev}"
         end
-        tsj += ']'
+        temp_point_json += ']'
       end
-      j+=tsj
-      j+=']'
+      json_string+=temp_point_json
+      json_string+=']'
     end
-    j + ']}}'
+    json_string + ']}}'
   end
 
 end
@@ -84,32 +84,32 @@ class Waypoint
   end
 
   def get_waypoint_json()
-    j = '{"type": "Feature",'
-    j += '"geometry": {"type": "Point","coordinates": '
-    j += "[#{point.lon},#{point.lat}"
+    json_string = '{"type": "Feature",'
+    json_string += '"geometry": {"type": "Point","coordinates": '
+    json_string += "[#{point.lon},#{point.lat}"
 
     if point.elev != nil
-      j += ",#{point.elev}"
+      json_string += ",#{point.elev}"
     end
 
-    j += ']},'
+    json_string += ']},'
     if name != nil or icon != nil
-      j += '"properties": {'
+      json_string += '"properties": {'
       if name != nil
-        j += '"title": "' + name + '"'
+        json_string += '"title": "' + name + '"'
       end
 
       if icon != nil 
         if name != nil
-          j += ','
+          json_string += ','
         end
-        j += '"icon": "' + icon + '"' 
+        json_string += '"icon": "' + icon + '"' 
       end
-      j += '}'
+      json_string += '}'
     end
 
-    j += "}"
-    return j
+    json_string += "}"
+    return json_string
   end
 
 end
@@ -126,18 +126,18 @@ class World
   end
 
   def to_geojson()
-    s = '{"type": "FeatureCollection","features": ['
-    @features.each_with_index do |f,i|
+    json_string = '{"type": "FeatureCollection","features": ['
+    @features.each_with_index do |feature,i|
       if i != 0
-        s +=","
+        json_string +=","
       end
-        if f.class == Track
-            s += f.get_track_json
-        elsif f.class == Waypoint
-            s += f.get_waypoint_json
+        if feature.class == Track
+            json_string += feature.get_track_json
+        elsif feature.class == Waypoint
+            json_string += feature.get_waypoint_json
       end
     end
-    s + "]}"
+    json_string + "]}"
   end
 
 end
