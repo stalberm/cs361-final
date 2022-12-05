@@ -10,26 +10,34 @@ class MultiLineString
   end
 
   def get_json()
-    json_string = '{'
-    json_string += '"type": "Feature", '
+    json_string = '{"type": "Feature",'
+    json_string += '"properties": {'
     if name != nil
-      json_string+= '"properties": {'
       json_string += '"title": "' + name + '"'
-      json_string += '},'
     end
+
+    json_string += '},'
+
     json_string += '"geometry": {'
     json_string += '"type": "MultiLineString",'
-    json_string +='"coordinates": ['
+    json_string +='"coordinates": '
 
-    line_strings.each_with_index do |line_string, index|
-      if index > 0
-        json_string += ","
-      end
-      json_string += line_string.get_json
-    end
-    json_string + ']}}'
+    json_string += object_list_to_json(line_strings)
+
+    json_string += '}}'
   end
 
+end
+
+def object_list_to_json(object_list)
+  json_list = '['
+  object_list.each_with_index do |object, index|
+    if index > 0
+      json_list += ","
+    end
+    json_list += object.get_json
+  end
+  json_list += ']'
 end
 
 class LineString
@@ -41,14 +49,7 @@ class LineString
   end
 
   def get_json()
-    json_string = '['
-    coords.each_with_index do |coord, index|
-      if index > 0
-        json_string += ","
-      end
-      json_string += coord.get_json
-    end
-    json_string+=']'
+    json_string = object_list_to_json(coords)
   end
 end
 
@@ -84,23 +85,27 @@ class Point
 
   def get_json()
     json_string = '{"type": "Feature",'
-
-    json_string += '"geometry": {"type": "Point","coordinates": '
-    json_string += coord.get_json
-    json_string += '},'
     json_string += '"properties": {'
     if name != nil
       json_string += '"title": "' + name + '"'
     end
+
     if icon != nil 
       if name != nil
         json_string += ','
       end
       json_string += '"icon": "' + icon + '"' 
     end
-    json_string += '}'
- 
-    json_string += "}"
+
+    json_string += '},'
+
+    json_string += '"geometry": {'
+    json_string += '"type": "Point",'
+    json_string += '"coordinates": '
+
+    json_string += coord.get_json
+
+    json_string += "}}"
     return json_string
   end
 
@@ -119,9 +124,9 @@ class FeatureCollection
 
   def get_json()
     json_string = '{"type": "FeatureCollection","features": ['
-    @features.each_with_index do |feature,i|
+    @features.each_with_index do |feature,index|
 
-      if i != 0
+      if index > 0
         json_string +=","
       end
 
