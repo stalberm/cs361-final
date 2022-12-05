@@ -84,7 +84,7 @@ attr_reader :lat, :lon, :elevation, :name, :icon
     @icon = icon
   end
 
-  def get_waypoint_json(indent=0)
+  def get_waypoint_json()
     j = '{"type": "Feature",'
     j += '"geometry": {"type": "Point","coordinates": '
     j += "[#{lon},#{lat}"
