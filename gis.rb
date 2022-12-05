@@ -2,13 +2,14 @@
 
 class Feature 
 
-  attr_reader :properties
+  attr_reader :properties, :coord_info
 
-  def initialize(name=nil)
+  def initialize(name, coord_info)
     @properties = {:name => name}
+    @coord_info = coord_info
   end
 
-  def get_json(coord_json)
+  def get_json()
     name = properties[:name]
     icon = properties[:icon]
   
@@ -30,7 +31,7 @@ class Feature
     json_string += '"type": "' + self.class.name + '",'
     json_string +='"coordinates": '
   
-    json_string += coord_json
+    json_string += coord_info
   
     json_string += '}}'
   end
@@ -38,16 +39,9 @@ end
 
 class MultiLineString < Feature
 
-  attr_reader :line_strings, :name, :properties
-
   def initialize(line_strings, name=nil)
-    @line_strings = line_strings
-    super(name)
-  end
-
-  def get_json()
     coord_json = object_list_to_json(line_strings)
-    super(coord_json)
+    super(name, coord_json)
   end
 
 end
@@ -99,17 +93,10 @@ end
 
 class Point < Feature
 
-  attr_reader :coord, :name, :icon, :properties
-
   def initialize(coord, name=nil, icon=nil)
-    @coord = coord
-    super(name)
-    properties[:icon] = icon
-  end
-
-  def get_json()
     coord_json = coord.get_json
-    super(coord_json)
+    super(name, coord_json)
+    properties[:icon] = icon
   end
 
 end
