@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-class Track
+class MultiLineString
 
   attr_reader :segments, :name
 
@@ -159,8 +159,8 @@ def main()
 
   ts3 = TrackSegment.new(ts3_points)
   
-  t = Track.new([ts1, ts2], "track 1")
-  t2 = Track.new([ts3], "track 2")
+  t = MultiLineString.new([ts1, ts2], "track 1")
+  t2 = MultiLineString.new([ts3], "track 2")
 
   world = FeatureCollection.new("My Data", [w, w2, t, t2])
 
