@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 class Track
+
   def initialize(segments, name=nil)
     @name = name
     segment_objects = []
@@ -47,12 +48,17 @@ class Track
     end
     j + ']}}'
   end
+  
 end
+
 class TrackSegment
+
   attr_reader :coordinates
+
   def initialize(coordinates)
     @coordinates = coordinates
   end
+  
 end
 
 class Point
@@ -64,11 +70,10 @@ class Point
     @lat = lat
     @ele = ele
   end
+
 end
 
 class Waypoint
-
-
 
 attr_reader :lat, :lon, :ele, :name, :type
 
@@ -85,15 +90,18 @@ attr_reader :lat, :lon, :ele, :name, :type
     # if name is not nil or type is not nil
     j += '"geometry": {"type": "Point","coordinates": '
     j += "[#{@lon},#{@lat}"
+
     if ele != nil
       j += ",#{@ele}"
     end
+
     j += ']},'
     if name != nil or type != nil
       j += '"properties": {'
       if name != nil
         j += '"title": "' + @name + '"'
       end
+
       if type != nil  # if type is not nil
         if name != nil
           j += ','
@@ -102,16 +110,20 @@ attr_reader :lat, :lon, :ele, :name, :type
       end
       j += '}'
     end
+
     j += "}"
     return j
   end
+
 end
 
 class World
-def initialize(name, things)
-  @name = name
-  @features = things
-end
+
+  def initialize(name, things)
+    @name = name
+    @features = things
+  end
+
   def add_feature(f)
     @features.append(t)
   end
@@ -131,18 +143,23 @@ end
     end
     s + "]}"
   end
+
 end
 
 def main()
   w = Waypoint.new(-121.5, 45.5, 30, "home", "flag")
   w2 = Waypoint.new(-121.5, 45.6, nil, "store", "dot")
+
   ts1 = [
-  Point.new(-122, 45),
-  Point.new(-122, 46),
-  Point.new(-121, 46),
+    Point.new(-122, 45),
+    Point.new(-122, 46),
+    Point.new(-121, 46),
   ]
 
-  ts2 = [ Point.new(-121, 45), Point.new(-121, 46), ]
+  ts2 = [ 
+    Point.new(-121, 45), 
+    Point.new(-121, 46),
+   ]
 
   ts3 = [
     Point.new(-121, 45.5),
