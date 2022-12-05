@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 class Track
-  
+
   attr_reader :segments, :name
 
   def initialize(segments, name=nil)
@@ -116,9 +116,9 @@ end
 
 class World
 
-  def initialize(name, things)
+  def initialize(name, features)
     @name = name
-    @features = things
+    @features = features
   end
 
   def add_feature(f)
