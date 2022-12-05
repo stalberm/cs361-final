@@ -8,9 +8,31 @@ class Feature
     @properties = {:name => name}
   end
 
-  def get_json(properties, coord_json)
-    json_string = construct_feature_property_json(properties)
-    json_string += construct_geometry_json(coord_json, self.class.name)
+  def get_json(coord_json)
+    name = properties[:name]
+    icon = properties[:icon]
+  
+    json_string = '{"type": "' + self.class.superclass.name + '",'
+    json_string += '"properties": {'
+    
+    if name != nil
+      json_string += '"title": "' + name + '"'
+    end
+    if icon != nil 
+      if name != nil
+        json_string += ','
+      end
+      json_string += '"icon": "' + icon + '"' 
+    end
+    json_string += '},'
+
+    json_string += '"geometry": {'
+    json_string += '"type": "' + self.class.name + '",'
+    json_string +='"coordinates": '
+  
+    json_string += coord_json
+  
+    json_string += '}}'
   end
 end
 
@@ -25,41 +47,11 @@ class MultiLineString < Feature
 
   def get_json()
     coord_json = object_list_to_json(line_strings)
-    super(properties, coord_json)
+    super(coord_json)
   end
 
 end
 
-def construct_feature_property_json(args={})
-
-  name = args[:name]
-  icon = args[:icon]
-
-  json_string = '{"type": "Feature",'
-  json_string += '"properties": {'
-  
-  if name != nil
-    json_string += '"title": "' + name + '"'
-  end
-  if icon != nil 
-    if name != nil
-      json_string += ','
-    end
-    json_string += '"icon": "' + icon + '"' 
-  end
-
-  json_string += '},'
-end
-
-def construct_geometry_json(coord_json, type)
-  json_string = '"geometry": {'
-  json_string += '"type": "' + type + '",'
-  json_string +='"coordinates": '
-
-  json_string += coord_json
-
-  json_string += '}}'
-end
 
 def object_list_to_json(object_list)
   json_list = '['
@@ -117,7 +109,7 @@ class Point < Feature
 
   def get_json()
     coord_json = coord.get_json
-    super(properties, coord_json)
+    super(coord_json)
   end
 
 end
@@ -127,7 +119,6 @@ class FeatureCollection
   attr_reader :features
 
   def initialize(name, features)
-    @name = name
     @features = features
   end
 
