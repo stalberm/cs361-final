@@ -8,7 +8,6 @@ class Track
     segments.each do |s|
       segment_objects.append(TrackSegment.new(s))
     end
-    # set segments to segment_objects
     @segments = segment_objects
   end
 
@@ -37,8 +36,8 @@ class Track
         # Add the coordinate
         tsj += '['
         tsj += "#{c.lon},#{c.lat}"
-        if c.ele != nil
-          tsj += ",#{c.ele}"
+        if c.elev != nil
+          tsj += ",#{c.elev}"
         end
         tsj += ']'
       end
@@ -62,12 +61,12 @@ end
 
 class Point
 
-  attr_reader :lat, :lon, :ele
+  attr_reader :lat, :lon, :elev
 
-  def initialize(lon, lat, ele=nil)
+  def initialize(lon, lat, elev=nil)
     @lon = lon
     @lat = lat
-    @ele = ele
+    @elev = elev
   end
 
 end
@@ -87,8 +86,8 @@ class Waypoint
     j += '"geometry": {"type": "Point","coordinates": '
     j += "[#{point.lon},#{point.lat}"
 
-    if point.ele != nil
-      j += ",#{point.ele}"
+    if point.elev != nil
+      j += ",#{point.elev}"
     end
 
     j += ']},'
@@ -102,7 +101,7 @@ class Waypoint
         if name != nil
           j += ','
         end
-        j += '"icon": "' + icon + '"'  # type is the icon
+        j += '"icon": "' + icon + '"' 
       end
       j += '}'
     end
