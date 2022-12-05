@@ -31,21 +31,21 @@ class TestGis < Test::Unit::TestCase
       Coordinate.new(-121, 46),
     ]
 
-    ts1 = TrackSegment.new(ts1_coords)
+    ts1 = LineString.new(ts1_coords)
     
     ts2_coords = [
       Coordinate.new(-121, 45),
       Coordinate.new(-121, 46),
     ]
 
-    ts2 = TrackSegment.new(ts2_coords)
+    ts2 = LineString.new(ts2_coords)
 
     ts3_coords = [
       Coordinate.new(-121, 45.5),
       Coordinate.new(-122, 45.5),
     ]
     
-    ts3 = TrackSegment.new(ts3_coords)
+    ts3 = LineString.new(ts3_coords)
 
     t = MultiLineString.new([ts1, ts2], "track 1")
     expected = JSON.parse('{"type": "Feature", "properties": {"title": "track 1"},"geometry": {"type": "MultiLineString","coordinates": [[[-122,45],[-122,46],[-121,46]],[[-121,45],[-121,46]]]}}')
@@ -69,20 +69,20 @@ class TestGis < Test::Unit::TestCase
       Coordinate.new(-122, 46),
       Coordinate.new(-121, 46),
     ]
-    ts1 = TrackSegment.new(ts1_coords)
+    ts1 = LineString.new(ts1_coords)
 
     ts2_coords = [ 
       Coordinate.new(-121, 45), 
       Coordinate.new(-121, 46),
     ]
 
-    ts2 = TrackSegment.new(ts2_coords)
+    ts2 = LineString.new(ts2_coords)
 
     ts3_coords = [
       Coordinate.new(-121, 45.5),
       Coordinate.new(-122, 45.5),
     ]
-    ts3 = TrackSegment.new(ts3_coords)
+    ts3 = LineString.new(ts3_coords)
 
     t = MultiLineString.new([ts1, ts2], "track 1")
     t2 = MultiLineString.new([ts3], "track 2")
