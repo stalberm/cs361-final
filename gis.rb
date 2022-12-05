@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
 class Track
+  
+  attr_reader :segments, :name
 
   def initialize(segments, name=nil)
     @name = name
@@ -14,30 +16,30 @@ class Track
   def get_track_json()
     j = '{'
     j += '"type": "Feature", '
-    if @name != nil
+    if name != nil
       j+= '"properties": {'
-      j += '"title": "' + @name + '"'
+      j += '"title": "' + name + '"'
       j += '},'
     end
     j += '"geometry": {'
     j += '"type": "MultiLineString",'
     j +='"coordinates": ['
 
-    @segments.each_with_index do |s, index|
+    segments.each_with_index do |s, index|
       if index > 0
         j += ","
       end
       j += '['
       tsj = ''
-      s.coordinates.each do |c|
+      s.points.each do |point|
         if tsj != ''
           tsj += ','
         end
         # Add the coordinate
         tsj += '['
-        tsj += "#{c.lon},#{c.lat}"
-        if c.elev != nil
-          tsj += ",#{c.elev}"
+        tsj += "#{point.lon},#{point.lat}"
+        if point.elev != nil
+          tsj += ",#{point.elev}"
         end
         tsj += ']'
       end
@@ -51,10 +53,10 @@ end
 
 class TrackSegment
 
-  attr_reader :coordinates
+  attr_reader :points
 
-  def initialize(coordinates)
-    @coordinates = coordinates
+  def initialize(points)
+    @points = points
   end
   
 end
