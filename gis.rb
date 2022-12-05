@@ -2,31 +2,52 @@
 
 class MultiLineString
 
-  attr_reader :line_strings, :name
+  attr_reader :line_strings, :name, :properties
 
   def initialize(line_strings, name=nil)
     @name = name
     @line_strings = line_strings
+    @properties = {:name => name}
   end
 
   def get_json()
-    json_string = '{"type": "Feature",'
-    json_string += '"properties": {'
-    if name != nil
-      json_string += '"title": "' + name + '"'
-    end
+    json_string = construct_feature_property_json(properties)
 
-    json_string += '},'
-
-    json_string += '"geometry": {'
-    json_string += '"type": "MultiLineString",'
-    json_string +='"coordinates": '
-
-    json_string += object_list_to_json(line_strings)
-
-    json_string += '}}'
+    coord_json = object_list_to_json(line_strings)
+    json_string += construct_geometry_json(coord_json, self.class.name)
   end
 
+end
+
+def construct_feature_property_json(args={})
+
+  name = args[:name] || nil
+  icon = args[:icon] || nil
+
+  json_string = '{"type": "Feature",'
+  json_string += '"properties": {'
+  
+  if name != nil
+    json_string += '"title": "' + name + '"'
+  end
+  if icon != nil 
+    if name != nil
+      json_string += ','
+    end
+    json_string += '"icon": "' + icon + '"' 
+  end
+
+  json_string += '},'
+end
+
+def construct_geometry_json(coord_json, type)
+  json_string = '"geometry": {'
+  json_string += '"type": "' + type + '",'
+  json_string +='"coordinates": '
+
+  json_string += coord_json
+
+  json_string += '}}'
 end
 
 def object_list_to_json(object_list)
@@ -75,38 +96,20 @@ end
 
 class Point
 
-  attr_reader :coord, :name, :icon
+  attr_reader :coord, :name, :icon, :properties
 
   def initialize(coord, name=nil, icon=nil)
     @coord = coord
     @name = name
     @icon = icon
+    @properties = {:name => name, :icon => icon}
   end
 
   def get_json()
-    json_string = '{"type": "Feature",'
-    json_string += '"properties": {'
-    if name != nil
-      json_string += '"title": "' + name + '"'
-    end
+    json_string = construct_feature_property_json(properties)
 
-    if icon != nil 
-      if name != nil
-        json_string += ','
-      end
-      json_string += '"icon": "' + icon + '"' 
-    end
-
-    json_string += '},'
-
-    json_string += '"geometry": {'
-    json_string += '"type": "Point",'
-    json_string += '"coordinates": '
-
-    json_string += coord.get_json
-
-    json_string += "}}"
-    return json_string
+    coord_json = coord.get_json
+    json_string += construct_geometry_json(coord_json, self.class.name)
   end
 
 end
