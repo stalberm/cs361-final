@@ -2,11 +2,11 @@
 
 class MultiLineString
 
-  attr_reader :segments, :name
+  attr_reader :line_strings, :name
 
-  def initialize(segments, name=nil)
+  def initialize(line_strings, name=nil)
     @name = name
-    @segments = segments
+    @line_strings = line_strings
   end
 
   def get_json()
@@ -21,13 +21,13 @@ class MultiLineString
     json_string += '"type": "MultiLineString",'
     json_string +='"coordinates": ['
 
-    segments.each_with_index do |s, index|
+    line_strings.each_with_index do |line_string, index|
       if index > 0
         json_string += ","
       end
       json_string += '['
       temp_point_json = ''
-      s.coords.each do |coord|
+      line_string.coords.each do |coord|
         if temp_point_json != ''
           temp_point_json += ','
         end
@@ -134,35 +134,34 @@ end
 
 def main()
   coord = Coordinate.new(-121.5, 45.5, 30)
-  w = Point.new(coord, "home", "flag")
-  coord = Coordinate.new(-121.5, 45.6, nil)
-  w2 = Point.new(coord, "store", "dot")
+  point1 = Point.new(coord, "home", "flag")
 
-  ts1_coords = [
+  coord = Coordinate.new(-121.5, 45.6, nil)
+  point2 = Point.new(coord, "store", "dot")
+
+  ls_coords = [
     Coordinate.new(-122, 45),
     Coordinate.new(-122, 46),
     Coordinate.new(-121, 46),
   ]
-  ts1 = LineString.new(ts1_coords)
+  ls1 = LineString.new(ls_coords)
 
-  ts2_coords = [ 
+  ls_coords = [ 
     Coordinate.new(-121, 45), 
     Coordinate.new(-121, 46),
    ]
+  ls2 = LineString.new(ls_coords)
 
-  ts2 = LineString.new(ts2_coords)
-
-  ts3_coords = [
+  ls_coords = [
     Coordinate.new(-121, 45.5),
     Coordinate.new(-122, 45.5),
   ]
-
-  ts3 = LineString.new(ts3_coords)
+  ls3 = LineString.new(ls_coords)
   
-  t = MultiLineString.new([ts1, ts2], "track 1")
-  t2 = MultiLineString.new([ts3], "track 2")
+  mls1 = MultiLineString.new([ls1, ls2], "track 1")
+  mls2 = MultiLineString.new([ls3], "track 2")
 
-  feature_collection = FeatureCollection.new("My Data", [w, w2, t, t2])
+  feature_collection = FeatureCollection.new("My Data", [point1, point2, mls1, mls2])
 
   puts feature_collection.get_json()
 end
