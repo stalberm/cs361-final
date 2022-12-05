@@ -121,11 +121,11 @@ class World
     @features = features
   end
 
-  def add_feature(f)
-    @features.append(t)
+  def add_feature(feature)
+    @features.append(feature)
   end
 
-  def to_geojson(indent=0)
+  def to_geojson()
     s = '{"type": "FeatureCollection","features": ['
     @features.each_with_index do |f,i|
       if i != 0
