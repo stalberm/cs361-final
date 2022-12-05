@@ -56,7 +56,7 @@ class TrackSegment
   
 end
 
-class Point
+class Coordinate
 
   attr_reader :lat, :lon, :elev
 
@@ -133,38 +133,38 @@ class FeatureCollection
 end
 
 def main()
-  p = Point.new(-121.5, 45.5, 30)
+  coord = Coordinate.new(-121.5, 45.5, 30)
   w = Waypoint.new(p, "home", "flag")
-  p = Point.new(-121.5, 45.6, nil)
+  coord = Coordinate.new(-121.5, 45.6, nil)
   w2 = Waypoint.new(p, "store", "dot")
 
-  ts1_points = [
-    Point.new(-122, 45),
-    Point.new(-122, 46),
-    Point.new(-121, 46),
+  ts1_coords = [
+    Coordinate.new(-122, 45),
+    Coordinate.new(-122, 46),
+    Coordinate.new(-121, 46),
   ]
-  ts1 = TrackSegment.new(ts1_points)
+  ts1 = TrackSegment.new(ts1_coords)
 
-  ts2_points = [ 
-    Point.new(-121, 45), 
-    Point.new(-121, 46),
+  ts2_coords = [ 
+    Coordinate.new(-121, 45), 
+    Coordinate.new(-121, 46),
    ]
 
-  ts2 = TrackSegment.new(ts2_points)
+  ts2 = TrackSegment.new(ts2_coords)
 
-  ts3_points = [
-    Point.new(-121, 45.5),
-    Point.new(-122, 45.5),
+  ts3_coords = [
+    Coordinate.new(-121, 45.5),
+    Coordinate.new(-122, 45.5),
   ]
 
-  ts3 = TrackSegment.new(ts3_points)
+  ts3 = TrackSegment.new(ts3_coords)
   
   t = MultiLineString.new([ts1, ts2], "track 1")
   t2 = MultiLineString.new([ts3], "track 2")
 
-  world = FeatureCollection.new("My Data", [w, w2, t, t2])
+  feature_collection = FeatureCollection.new("My Data", [w, w2, t, t2])
 
-  puts world.get_json()
+  puts feature_collection.get_json()
 end
 
 if File.identical?(__FILE__, $0)
