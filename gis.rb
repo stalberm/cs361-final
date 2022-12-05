@@ -6,11 +6,7 @@ class Track
 
   def initialize(segments, name=nil)
     @name = name
-    segment_objects = []
-    segments.each do |s|
-      segment_objects.append(TrackSegment.new(s))
-    end
-    @segments = segment_objects
+    @segments = segments
   end
 
   def get_track_json()
@@ -145,22 +141,27 @@ def main()
   p = Point.new(-121.5, 45.6, nil)
   w2 = Waypoint.new(p, "store", "dot")
 
-  ts1 = [
+  ts1_points = [
     Point.new(-122, 45),
     Point.new(-122, 46),
     Point.new(-121, 46),
   ]
+  ts1 = TrackSegment.new(ts1_points)
 
-  ts2 = [ 
+  ts2_points = [ 
     Point.new(-121, 45), 
     Point.new(-121, 46),
    ]
 
-  ts3 = [
+  ts2 = TrackSegment.new(ts2_points)
+
+  ts3_points = [
     Point.new(-121, 45.5),
     Point.new(-122, 45.5),
   ]
 
+  ts3 = TrackSegment.new(ts3_points)
+  
   t = Track.new([ts1, ts2], "track 1")
   t2 = Track.new([ts3], "track 2")
 
