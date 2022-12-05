@@ -74,12 +74,10 @@ end
 
 class Waypoint
 
-attr_reader :lat, :lon, :elevation, :name, :icon
+  attr_reader :point, :name, :icon
 
-  def initialize(lon, lat, elevation=nil, name=nil, icon=nil)
-    @lat = lat
-    @lon = lon
-    @elevation = elevation
+  def initialize(point, name=nil, icon=nil)
+    @point = point
     @name = name
     @icon = icon
   end
@@ -87,10 +85,10 @@ attr_reader :lat, :lon, :elevation, :name, :icon
   def get_waypoint_json()
     j = '{"type": "Feature",'
     j += '"geometry": {"type": "Point","coordinates": '
-    j += "[#{lon},#{lat}"
+    j += "[#{point.lon},#{point.lat}"
 
-    if elevation != nil
-      j += ",#{elevation}"
+    if point.ele != nil
+      j += ",#{point.ele}"
     end
 
     j += ']},'
@@ -144,8 +142,10 @@ class World
 end
 
 def main()
-  w = Waypoint.new(-121.5, 45.5, 30, "home", "flag")
-  w2 = Waypoint.new(-121.5, 45.6, nil, "store", "dot")
+  p = Point.new(-121.5, 45.5, 30)
+  w = Waypoint.new(p, "home", "flag")
+  p = Point.new(-121.5, 45.6, nil)
+  w2 = Waypoint.new(p, "store", "dot")
 
   ts1 = [
     Point.new(-122, 45),
