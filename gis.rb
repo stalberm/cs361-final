@@ -27,14 +27,14 @@ class MultiLineString
       end
       json_string += '['
       temp_point_json = ''
-      s.points.each do |point|
+      s.coords.each do |coord|
         if temp_point_json != ''
           temp_point_json += ','
         end
         temp_point_json += '['
-        temp_point_json += "#{point.lon},#{point.lat}"
-        if point.elev != nil
-          temp_point_json += ",#{point.elev}"
+        temp_point_json += "#{coord.lon},#{coord.lat}"
+        if coord.elev != nil
+          temp_point_json += ",#{coord.elev}"
         end
         temp_point_json += ']'
       end
@@ -48,10 +48,10 @@ end
 
 class TrackSegment
 
-  attr_reader :points
+  attr_reader :coords
 
-  def initialize(points)
-    @points = points
+  def initialize(coords)
+    @coords = coords
   end
   
 end
@@ -68,12 +68,12 @@ class Coordinate
 
 end
 
-class Waypoint
+class Point
 
-  attr_reader :point, :name, :icon
+  attr_reader :coord, :name, :icon
 
-  def initialize(point, name=nil, icon=nil)
-    @point = point
+  def initialize(coord, name=nil, icon=nil)
+    @coord = coord
     @name = name
     @icon = icon
   end
@@ -82,9 +82,9 @@ class Waypoint
     json_string = '{"type": "Feature",'
 
     json_string += '"geometry": {"type": "Point","coordinates": '
-    json_string += "[#{point.lon},#{point.lat}"
-    if point.elev != nil
-      json_string += ",#{point.elev}"
+    json_string += "[#{coord.lon},#{coord.lat}"
+    if coord.elev != nil
+      json_string += ",#{coord.elev}"
     end
     json_string += ']},'
 
@@ -134,9 +134,9 @@ end
 
 def main()
   coord = Coordinate.new(-121.5, 45.5, 30)
-  w = Waypoint.new(p, "home", "flag")
+  w = Point.new(coord, "home", "flag")
   coord = Coordinate.new(-121.5, 45.6, nil)
-  w2 = Waypoint.new(p, "store", "dot")
+  w2 = Point.new(coord, "store", "dot")
 
   ts1_coords = [
     Coordinate.new(-122, 45),
