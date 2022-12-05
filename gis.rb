@@ -74,14 +74,14 @@ end
 
 class Waypoint
 
-attr_reader :lat, :lon, :ele, :name, :type
+attr_reader :lat, :lon, :ele, :name, :icon
 
-  def initialize(lon, lat, ele=nil, name=nil, type=nil)
+  def initialize(lon, lat, ele=nil, name=nil, icon=nil)
     @lat = lat
     @lon = lon
     @ele = ele
     @name = name
-    @type = type
+    @icon = icon
   end
 
   def get_waypoint_json(indent=0)
@@ -94,17 +94,17 @@ attr_reader :lat, :lon, :ele, :name, :type
     end
 
     j += ']},'
-    if name != nil or type != nil
+    if name != nil or icon != nil
       j += '"properties": {'
       if name != nil
         j += '"title": "' + @name + '"'
       end
 
-      if type != nil 
+      if icon != nil 
         if name != nil
           j += ','
         end
-        j += '"icon": "' + @type + '"'  # type is the icon
+        j += '"icon": "' + @icon + '"'  # type is the icon
       end
       j += '}'
     end
