@@ -25,16 +25,7 @@ class MultiLineString
       if index > 0
         json_string += ","
       end
-      json_string += '['
-      temp_point_json = ''
-      line_string.coords.each do |coord|
-        if temp_point_json != ''
-          temp_point_json += ','
-        end
-        temp_point_json += coord.get_json
-      end
-      json_string+=temp_point_json
-      json_string+=']'
+      json_string += line_string.get_json
     end
     json_string + ']}}'
   end
@@ -47,6 +38,17 @@ class LineString
 
   def initialize(coords)
     @coords = coords
+  end
+
+  def get_json()
+    json_string = '['
+    coords.each_with_index do |coord, index|
+      if index > 0
+        json_string += ","
+      end
+      json_string += coord.get_json
+    end
+    json_string+=']'
   end
 end
 
