@@ -1,28 +1,39 @@
 #!/usr/bin/env ruby
 
-class MultiLineString
+class Feature 
+
+  attr_reader :properties
+
+  def initialize(name=nil)
+    @properties = {:name => name}
+  end
+
+  def get_json(properties, coord_json)
+    json_string = construct_feature_property_json(properties)
+    json_string += construct_geometry_json(coord_json, self.class.name)
+  end
+end
+
+class MultiLineString < Feature
 
   attr_reader :line_strings, :name, :properties
 
   def initialize(line_strings, name=nil)
-    @name = name
     @line_strings = line_strings
-    @properties = {:name => name}
+    super(name)
   end
 
   def get_json()
-    json_string = construct_feature_property_json(properties)
-
     coord_json = object_list_to_json(line_strings)
-    json_string += construct_geometry_json(coord_json, self.class.name)
+    super(properties, coord_json)
   end
 
 end
 
 def construct_feature_property_json(args={})
 
-  name = args[:name] || nil
-  icon = args[:icon] || nil
+  name = args[:name]
+  icon = args[:icon]
 
   json_string = '{"type": "Feature",'
   json_string += '"properties": {'
@@ -94,27 +105,26 @@ class Coordinate
   end
 end
 
-class Point
+class Point < Feature
 
   attr_reader :coord, :name, :icon, :properties
 
   def initialize(coord, name=nil, icon=nil)
     @coord = coord
-    @name = name
-    @icon = icon
-    @properties = {:name => name, :icon => icon}
+    super(name)
+    properties[:icon] = icon
   end
 
   def get_json()
-    json_string = construct_feature_property_json(properties)
-
     coord_json = coord.get_json
-    json_string += construct_geometry_json(coord_json, self.class.name)
+    super(properties, coord_json)
   end
 
 end
 
 class FeatureCollection
+
+  attr_reader :features
 
   def initialize(name, features)
     @name = name
@@ -126,16 +136,9 @@ class FeatureCollection
   end
 
   def get_json()
-    json_string = '{"type": "FeatureCollection","features": ['
-    @features.each_with_index do |feature,index|
-
-      if index > 0
-        json_string +=","
-      end
-
-      json_string += feature.get_json
-    end
-    json_string + "]}"
+    json_string = '{"type": "' + self.class.name + '","features": '
+    json_string += object_list_to_json(features)
+    json_string += "}"
   end
 
 end
@@ -166,6 +169,7 @@ def main()
   ]
   ls3 = LineString.new(ls_coords)
   
+
   mls1 = MultiLineString.new([ls1, ls2], "track 1")
   mls2 = MultiLineString.new([ls3], "track 2")
 
