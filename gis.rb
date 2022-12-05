@@ -13,27 +13,25 @@ class Feature
     name = properties[:name]
     icon = properties[:icon]
   
-    json_string = '{"type": "' + self.class.superclass.name + '",'
-    json_string += '"properties": {'
-    
+    json_string = "{\"type\": \"Feature\","
+    json_string += "\"properties\": {"
     if name != nil
-      json_string += '"title": "' + name + '"'
+      json_string += "\"title\": \"#{name}\""
     end
     if icon != nil 
       if name != nil
-        json_string += ','
+        json_string += ","
       end
-      json_string += '"icon": "' + icon + '"' 
+      json_string += "\"icon\": \"#{icon}\"" 
     end
-    json_string += '},'
+    json_string += "},"
 
-    json_string += '"geometry": {'
-    json_string += '"type": "' + self.class.name + '",'
-    json_string +='"coordinates": '
-  
+    json_string += "\"geometry\": "
+    json_string += type_to_json(self.class.name)
+
+    json_string += "\"coordinates\": "
     json_string += coord_info
-  
-    json_string += '}}'
+    json_string += "}}"
   end
 end
 
@@ -46,16 +44,35 @@ class MultiLineString < Feature
 
 end
 
+class Point < Feature
 
-def object_list_to_json(object_list)
-  json_list = '['
-  object_list.each_with_index do |object, index|
-    if index > 0
-      json_list += ","
-    end
-    json_list += object.get_json
+  def initialize(coord, name=nil, icon=nil)
+    coord_json = coord.get_json
+    super(name, coord_json)
+    properties[:icon] = icon
   end
-  json_list += ']'
+
+end
+
+class FeatureCollection
+
+  attr_reader :features
+
+  def initialize(name, features)
+    @features = features
+  end
+
+  def add_feature(feature)
+    @features.append(feature)
+  end
+
+  def get_json()
+    json_string = type_to_json(self.class.name)
+    json_string += "\"features\": "
+    json_string += object_list_to_json(features)
+    json_string += "}"
+  end
+
 end
 
 class LineString
@@ -82,43 +99,28 @@ class Coordinate
   end
 
   def get_json()
-    json_string = ''
+    json_string = ""
     json_string += "[#{lon},#{lat}"
     if elev != nil
       json_string += ",#{elev}"
     end
-    json_string += ']'
+    json_string += "]"
   end
 end
 
-class Point < Feature
-
-  def initialize(coord, name=nil, icon=nil)
-    coord_json = coord.get_json
-    super(name, coord_json)
-    properties[:icon] = icon
+def object_list_to_json(object_list)
+  json_list = "["
+  object_list.each_with_index do |object, index|
+    if index > 0
+      json_list += ","
+    end
+    json_list += object.get_json
   end
-
+  json_list += "]"
 end
 
-class FeatureCollection
-
-  attr_reader :features
-
-  def initialize(name, features)
-    @features = features
-  end
-
-  def add_feature(feature)
-    @features.append(feature)
-  end
-
-  def get_json()
-    json_string = '{"type": "' + self.class.name + '","features": '
-    json_string += object_list_to_json(features)
-    json_string += "}"
-  end
-
+def type_to_json(type)
+  "{\"type\": \"#{type}\","
 end
 
 def main()
@@ -138,7 +140,7 @@ def main()
   ls_coords = [ 
     Coordinate.new(-121, 45), 
     Coordinate.new(-121, 46),
-   ]
+  ]
   ls2 = LineString.new(ls_coords)
 
   ls_coords = [
