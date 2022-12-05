@@ -31,12 +31,7 @@ class MultiLineString
         if temp_point_json != ''
           temp_point_json += ','
         end
-        temp_point_json += '['
-        temp_point_json += "#{coord.lon},#{coord.lat}"
-        if coord.elev != nil
-          temp_point_json += ",#{coord.elev}"
-        end
-        temp_point_json += ']'
+        temp_point_json += coord.get_json
       end
       json_string+=temp_point_json
       json_string+=']'
@@ -53,7 +48,6 @@ class LineString
   def initialize(coords)
     @coords = coords
   end
-  
 end
 
 class Coordinate
@@ -66,6 +60,14 @@ class Coordinate
     @elev = elev
   end
 
+  def get_json()
+    json_string = ''
+    json_string += "[#{lon},#{lat}"
+    if elev != nil
+      json_string += ",#{elev}"
+    end
+    json_string += ']'
+  end
 end
 
 class Point
@@ -82,12 +84,8 @@ class Point
     json_string = '{"type": "Feature",'
 
     json_string += '"geometry": {"type": "Point","coordinates": '
-    json_string += "[#{coord.lon},#{coord.lat}"
-    if coord.elev != nil
-      json_string += ",#{coord.elev}"
-    end
-    json_string += ']},'
-
+    json_string += coord.get_json
+    json_string += '},'
     json_string += '"properties": {'
     if name != nil
       json_string += '"title": "' + name + '"'
