@@ -95,12 +95,19 @@ class TestGis < Test::Unit::TestCase
     assert_equal(expected, result)
   end
 
-  def test_world
+  def test_featurecollection_single_feature
     coord = Coordinate.new(-121.5, 45.5, 30)
     point1 = Point.new(coord, "home", "flag")
-    
-    coord = Coordinate.new(-121.5, 45.6, nil)
-    point2 = Point.new(coord, "store", "dot")
+
+    feature_collection = FeatureCollection.new("My Data", [point1])
+    expected = JSON.parse('{"type": "FeatureCollection","features": [{"type": "Feature","properties": {"title": "home","icon": "flag"},"geometry": {"type": "Point","coordinates": [-121.5,45.5,30]}}]}')
+    result = JSON.parse(feature_collection.get_json)
+    assert_equal(expected, result)
+  end
+
+  def test_featurecollection_multiple_features
+    coord = Coordinate.new(-121.5, 45.5, 30)
+    point1 = Point.new(coord, "home", "flag")
 
     ls_coords = [
       Coordinate.new(-122, 45),
@@ -116,18 +123,38 @@ class TestGis < Test::Unit::TestCase
 
     ls2 = LineString.new(ls_coords)
 
+    mls1 = MultiLineString.new([ls1, ls2], "track 1")
+
+    feature_collection = FeatureCollection.new("My Data", [point1, mls1])
+    expected = JSON.parse('{"type": "FeatureCollection","features": [{"type": "Feature","properties": {"title": "home","icon": "flag"},"geometry": {"type": "Point","coordinates": [-121.5,45.5,30]}},{"type": "Feature", "properties": {"title": "track 1"},"geometry": {"type": "MultiLineString","coordinates": [[[-122,45],[-122,46],[-121,46]],[[-121,45],[-121,46]]]}}]}')
+    result = JSON.parse(feature_collection.get_json)
+    assert_equal(expected, result)
+  end
+
+  def test_featurecollection_add_feature
+    coord = Coordinate.new(-121.5, 45.5, 30)
+    point1 = Point.new(coord, "home", "flag")
+
     ls_coords = [
-      Coordinate.new(-121, 45.5),
-      Coordinate.new(-122, 45.5),
+      Coordinate.new(-122, 45),
+      Coordinate.new(-122, 46),
+      Coordinate.new(-121, 46),
     ]
-    ls3 = LineString.new(ls_coords)
+    ls1 = LineString.new(ls_coords)
+
+    ls_coords = [ 
+      Coordinate.new(-121, 45), 
+      Coordinate.new(-121, 46),
+    ]
+
+    ls2 = LineString.new(ls_coords)
 
     mls1 = MultiLineString.new([ls1, ls2], "track 1")
-    mls2 = MultiLineString.new([ls3], "track 2")
 
-    feature_collection = FeatureCollection.new("My Data", [point1, point2, mls1, mls2])
-
-    expected = JSON.parse('{"type": "FeatureCollection","features": [{"type": "Feature","properties": {"title": "home","icon": "flag"},"geometry": {"type": "Point","coordinates": [-121.5,45.5,30]}},{"type": "Feature","properties": {"title": "store","icon": "dot"},"geometry": {"type": "Point","coordinates": [-121.5,45.6]}},{"type": "Feature", "properties": {"title": "track 1"},"geometry": {"type": "MultiLineString","coordinates": [[[-122,45],[-122,46],[-121,46]],[[-121,45],[-121,46]]]}},{"type": "Feature", "properties": {"title": "track 2"},"geometry": {"type": "MultiLineString","coordinates": [[[-121,45.5],[-122,45.5]]]}}]}')
+    feature_collection = FeatureCollection.new("My Data", [point1])
+    feature_collection.add_feature(mls1)
+    
+    expected = JSON.parse('{"type": "FeatureCollection","features": [{"type": "Feature","properties": {"title": "home","icon": "flag"},"geometry": {"type": "Point","coordinates": [-121.5,45.5,30]}},{"type": "Feature", "properties": {"title": "track 1"},"geometry": {"type": "MultiLineString","coordinates": [[[-122,45],[-122,46],[-121,46]],[[-121,45],[-121,46]]]}}]}')
     result = JSON.parse(feature_collection.get_json)
     assert_equal(expected, result)
   end
