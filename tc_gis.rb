@@ -4,22 +4,42 @@ require 'test/unit'
 
 class TestGis < Test::Unit::TestCase
 
-  def test_waypoints
+  def test_full_point
     coord = Coordinate.new(-121.5, 45.5, 30)
     point = Point.new(coord, "home", "flag")
     expected = JSON.parse('{"type": "Feature","properties": {"title": "home","icon": "flag"},"geometry": {"type": "Point","coordinates": [-121.5,45.5,30]}}')
     result = JSON.parse(point.get_json)
     assert_equal(result, expected)
+  end
 
+  def test_point_missing_elev
     coord = Coordinate.new(-121.5, 45.5, nil)
-    point = Point.new(coord, nil, "flag")
-    expected = JSON.parse('{"type": "Feature","properties": {"icon": "flag"},"geometry": {"type": "Point","coordinates": [-121.5,45.5]}}')
+    point = Point.new(coord, "home", "flag")
+    expected = JSON.parse('{"type": "Feature","properties": {"title": "home","icon": "flag"},"geometry": {"type": "Point","coordinates": [-121.5,45.5]}}')
     result = JSON.parse(point.get_json)
     assert_equal(result, expected)
+  end
 
-    coord = Coordinate.new(-121.5, 45.5, nil)
-    point = Point.new(coord, "store", nil)
-    expected = JSON.parse('{"type": "Feature","properties": {"title": "store"},"geometry": {"type": "Point","coordinates": [-121.5,45.5]}}')
+  def test_point_missing_name
+    coord = Coordinate.new(-121.5, 45.5, 30)
+    point = Point.new(coord, nil, "flag")
+    expected = JSON.parse('{"type": "Feature","properties": {"icon": "flag"},"geometry": {"type": "Point","coordinates": [-121.5,45.5,30]}}')
+    result = JSON.parse(point.get_json)
+    assert_equal(result, expected)
+  end
+
+  def test_point_missing_icon
+    coord = Coordinate.new(-121.5, 45.5, 30)
+    point = Point.new(coord, "home")
+    expected = JSON.parse('{"type": "Feature","properties": {"title": "home"},"geometry": {"type": "Point","coordinates": [-121.5,45.5,30]}}')
+    result = JSON.parse(point.get_json)
+    assert_equal(result, expected)
+  end
+
+  def test_point_missing_name_and_icon
+    coord = Coordinate.new(-121.5, 45.5, 30)
+    point = Point.new(coord)
+    expected = JSON.parse('{"type": "Feature","properties": {},"geometry": {"type": "Point","coordinates": [-121.5,45.5,30]}}')
     result = JSON.parse(point.get_json)
     assert_equal(result, expected)
   end
